@@ -5,6 +5,7 @@ import {
   query3WithProblem,
 } from "./mocks";
 import { extractProblems } from "./extract-problems";
+import "./styles.css";
 
 // const createErrorHandleHook = (content: string, problemsTypename: string) => {
 //   const indexStart = 'function '.length;
