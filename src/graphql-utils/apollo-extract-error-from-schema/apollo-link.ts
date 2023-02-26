@@ -1,14 +1,10 @@
 import { ApolloLink } from '@apollo/client';
 import { GraphQLError } from 'graphql/error/GraphQLError';
 import { mapValues } from 'lodash';
-
-
-type GraphQLResponse = {
-  __typename: string;
-};
+import { GqlType } from '../union-helpers'
 
 class BusinessGraphQLError extends GraphQLError {
-  constructor(problem: GraphQLResponse) {
+  constructor(problem: GqlType) {
     super('BusinessGraphQLError', {
       extensions: {
         problem,
@@ -19,15 +15,15 @@ class BusinessGraphQLError extends GraphQLError {
 
 const ERROR_TYPENAME_ENDING = 'Problem';
 
-const isGraphQLResponse = <T extends GraphQLResponse>(
+const isGraphQLResponse = <T extends GqlType>(
   value: unknown,
 ): value is T => '__typename' in value;
 
-const isProblem = (value: GraphQLResponse) =>
+const isProblem = (value: GqlType) =>
   value.__typename.endsWith(ERROR_TYPENAME_ENDING);
 
 const mapProblems =
-  (onFindProblem: (problem: GraphQLResponse) => unknown) =>
+  (onFindProblem: (problem: GqlType) => unknown) =>
     (data: unknown): unknown => {
       if (Array.isArray(data)) return data.map(mapProblems(onFindProblem));
       if (!isGraphQLResponse(data)) return data;
